@@ -59,7 +59,7 @@ keys = [
     Key([ ], 'XF86AudioPrev',       lazy.spawn('playerctl previous')),
     Key([ ], 'XF86AudioNext',       lazy.spawn('playerctl next')),
     Key([ ], 'XF86MonBrightnessUp', lazy.spawn('brightnessctl set +5%')),
-    Key([ ], 'XF86MonBrightnessDown',lazy.spawn('brightnessctl set 5%-')),
+    Key([],  'XF86MonBrightnessDown',lazy.spawn('brightnessctl set 5%-')),
 
     # Caps lock indicator
     Key([ ], 'Caps_Lock',           lazy.spawn('notify-send "🤓🤓🤓🤓" "<u><b>CAPS</b></u>" -u critical')),
@@ -69,31 +69,13 @@ keys = [
 
 ]
 
-groups = [Group(i) for i in "123456789"]
-
-for i in groups:
-    keys.extend(
-        [
-            # mod1 + letter of group = switch to group
-            Key(
-                [mod],
-                i.name,
-                lazy.group[i.name].toscreen(),
-                desc="Switch to group {}".format(i.name),
-            ),
-            # mod1 + shift + letter of group = switch to & move focused window to group
-            Key(
-                [mod, "shift"],
-                i.name,
-                lazy.window.togroup(i.name, switch_group=False),
-                desc="Switch to & move focused window to group {}".format(i.name),
-            ),
-            # Or, use below if you prefer not to switch to that group.
-            # # mod1 + shift + letter of group = move focused window to group
-            # Key([mod, "shift"], i.name, lazy.window.togroup(i.name),
-            #     desc="move focused window to group {}".format(i.name)),
-        ]
-    )
+group_names = '        '.split()
+groups = [Group(name, layout='monadtall') for name in group_names]
+for i, name in enumerate(group_names):
+    indx = str(i + 1)
+    keys += [
+        Key([mod], indx, lazy.group[name].toscreen()),
+        Key([mod, 'shift'], indx, lazy.window.togroup(name))]
 
 colors = [["#282828", "#282828"],
           ["#1d2021", "#1d2021"],
@@ -143,8 +125,9 @@ def init_widgets_list():
 
         widget.GroupBox(
             font = "JetBrains Mono",
-            fontsize = 15,
-            margin_y = 4,
+            fontsize = 25,
+            disable_drag = True,
+            margin_y = 3,
             margin_x = 0,
             padding_y = 0,
             padding_x = 6,
@@ -288,7 +271,8 @@ def init_widgets_list():
             background = colors[0],
             foreground = colors[2],
             fmt = "🧠 {}",
-            format = "{MemUsed: .0f}{mm}"
+            measure_mem='G',
+            format = "{MemUsed: .1f}{mm}"
         ),
 
         widget.Sep(

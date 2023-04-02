@@ -1,8 +1,9 @@
 #! /bin/bash
-xbindkeys -f ~/.config/.xbindkeysrc &
 picom &
 nm-applet &
 volumeicon &
+# for laptop users only!
+# cbatticon &
 conky -c ~/.config/conky/qtile/conky.conf
 ~/.screenlayout/main.sh &
 udiskie &

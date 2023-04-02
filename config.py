@@ -64,6 +64,9 @@ keys = [
     # Caps lock indicator
     Key([ ], 'Caps_Lock',           lazy.spawn('notify-send "🤓🤓🤓🤓" "<u><b>CAPS</b></u>" -u critical')),
 
+    # Screenshot
+    Key([ ], 'Print',               lazy.spawn('ksnip')),
+
 ]
 
 groups = [Group(i) for i in "123456789"]
@@ -102,7 +105,7 @@ colors = [["#282828", "#282828"],
           ["#b16286", "#b16286"],
           ["#83a598", "#83a598"],
           ["#d3869b", "#d3869b"],
-          ["#bdae93", "#bdae93"]]
+          ["#a89984", "#a89984"]]
 
 layout_theme = {"border_width": 2,
                 "margin": 8,
@@ -112,6 +115,7 @@ layout_theme = {"border_width": 2,
 layouts = [
     layout.MonadTall(**layout_theme),
     layout.Max(),
+    layout.Floating(**layout_theme)
     # layout.Columns(border_focus_stack=["#d75f5f", "#8f3d3d"], border_width=2),
     # Try more layouts by unleashing below layouts.
     # layout.Stack(num_stacks=2),
@@ -124,7 +128,6 @@ layouts = [
     # layout.TreeTab(),
     # layout.VerticalTile(),
     # layout.Zoomy(),
-    layout.Floating(**layout_theme)
 ]
 
 widget_defaults = dict(
@@ -137,6 +140,7 @@ extension_defaults = widget_defaults.copy()
 
 def init_widgets_list():
     widgets_list = [
+
         widget.GroupBox(
             font = "JetBrains Mono",
             fontsize = 15,
@@ -149,43 +153,186 @@ def init_widgets_list():
             inactive = colors[10],
             rounded = False,
             highlight_color = colors[1],
-            highlight_method = "line",
-            this_current_screen_border = colors[6],
+            highlight_method = "block",
+            this_current_screen_border = colors[8],
             this_screen_border = colors [4],
             other_current_screen_border = colors[6],
             other_screen_border = colors[4],
             foreground = colors[2],
             background = colors[0]
-            ),
+        ),
         
         widget.Sep(
-               linewidth = 5, padding = 0,
-               foreground = colors[0], background = colors[0]
-               ),
-        widget.WindowName(),
-        widget.Chord(
-            chords_colors={
-                "launch": ("#ff0000", "#ffffff"),
-            },
-            name_transform=lambda name: name.upper(),
+            linewidth = 5, padding = 0,
+            foreground = colors[0], background = colors[0]
         ),
-        widget.Clock(format="%Y-%m-%d %a %H:%M:%S %p"),
-        widget.Systray(),
+
+        widget.TextBox(
+            text = '|',
+            background = colors[0],
+            foreground = colors[2],
+            padding = 2,
+            fontsize = 14
+        ), 
+        
+        widget.Sep(
+            linewidth = 5, padding = 0,
+            foreground = colors[0], background = colors[0]
+        ),
+
+        widget.WindowName(
+            foreground = colors[2],
+            background = colors[0],
+            padding = 0,
+            fontsize = 14,
+            margin_y = 4,
+            margin_x = 0,
+            padding_y = 0,
+            padding_x = 6,
+            borderwidth = 3,
+        ),
+        
+        widget.Sep(
+            linewidth = 5, padding = 0,
+            foreground = colors[0], background = colors[0]
+        ),
+
+        widget.CurrentLayoutIcon(
+            custom_icon_paths = [os.path.expanduser("~/.config/qtile/icons")],
+            foreground = colors[2],
+            background = colors[0],
+            padding = 0,
+            scale = 0.7
+        ),
+        
+        widget.Sep(
+            linewidth = 5, padding = 0,
+            foreground = colors[0], background = colors[0]
+        ),
+
+        widget.TextBox(
+            text = '|',
+            background = colors[0],
+            foreground = colors[2],
+            padding = 2,
+            fontsize = 14
+        ),
+         
+        widget.PulseVolume(
+            background = colors[0],
+            foreground = colors[2],
+            volume_app = "pamixer",
+            update_interval = 0.01,
+            fmt = "🔊 {}",
+        ),
+
+        widget.Sep(
+            linewidth = 5, padding = 0,
+            foreground = colors[0], background = colors[0]
+        ),
+
+        widget.TextBox(
+            text = '|',
+            background = colors[0],
+            foreground = colors[2],
+            padding = 2,
+            fontsize = 14
+        ),
+
+
+        widget.CPU(
+            background = colors[0],
+            foreground = colors[2],
+            fmt = "💻 {}",
+            format = "{load_percent}%"
+        ),
+
+        widget.Sep(
+            linewidth = 5, padding = 0,
+            foreground = colors[0], background = colors[0]
+        ),
+
+        widget.TextBox(
+            text = '|',
+            background = colors[0],
+            foreground = colors[2],
+            padding = 2,
+            fontsize = 14
+        ),
+
+        widget.ThermalZone(
+            background = colors[0],
+            fgcolor_normal = colors[2],
+            fgcolor_high = colors[5],
+            fgcolor_crit = colors[3],
+            update_interval = 1,
+            zone = '/sys/class/thermal/thermal_zone1/temp',
+            fmt = "🔥 {}"
+        ),
+
+        widget.Sep(
+            linewidth = 5, padding = 0,
+            foreground = colors[0], background = colors[0]
+        ),
+
+        widget.TextBox(
+            text = '|',
+            background = colors[0],
+            foreground = colors[2],
+            padding = 2,
+            fontsize = 14
+        ),
+
+        
+        widget.Memory(
+            background = colors[0],
+            foreground = colors[2],
+            fmt = "🧠 {}",
+            format = "{MemUsed: .0f}{mm}"
+        ),
+
+        widget.Sep(
+            linewidth = 5, padding = 0,
+            foreground = colors[0], background = colors[0]
+        ),
+
+        widget.TextBox(
+            text = '|',
+            background = colors[0],
+            foreground = colors[2],
+            padding = 2,
+            fontsize = 14
+        ),
+
+        widget.Sep(
+            linewidth = 5, paddi= 0,
+            foreground = colors[0], background = colors[0]
+        ),
+
+        widget.Clock(
+            format="📆 %Y-%m-%d %a | 🕒 %H:%M:%S %p",
+            foreground = colors[2],
+            background = colors[0],
+        ),
+
+        widget.Systray(
+            background = colors[0],
+        ),
     ]
     return widgets_list
 
 def init_widgets_screen1():
     widgets_screen1 = init_widgets_list()
-    del widgets_screen1[6:7]               # Slicing removes unwanted widgets (systray) on Monitors 1,3
     return widgets_screen1
 
 def init_widgets_screen2():
     widgets_screen2 = init_widgets_list()
+    del widgets_screen2[23:24]               # Slicing removes unwanted widgets (systray) on Monitors 1,3
     return widgets_screen2                 # Monitor 2 will display all widgets in widgets_list
 
 def init_screens():
-    return [Screen(top=bar.Bar(widgets=init_widgets_screen1(), opacity=1.0, size=20)),
-            Screen(top=bar.Bar(widgets=init_widgets_screen2(), opacity=1.0, size=20))]
+    return [Screen(top=bar.Bar(widgets=init_widgets_screen1(), opacity=1.0, size=23, margin=5)),
+            Screen(top=bar.Bar(widgets=init_widgets_screen2(), opacity=1.0, size=23, margin=5))]
 
 if __name__ in ["config", "__main__"]:
     screens = init_screens()

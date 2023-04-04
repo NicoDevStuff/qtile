@@ -8,6 +8,7 @@ import os
 mod = "mod4"
 terminal = "kitty"
 browser = "firefox"
+home = os.path.expanduser('~/.config/qtile/')
 
 keys = [
     Key([mod], "h", lazy.layout.left(), desc="Move focus to left"),
@@ -34,14 +35,12 @@ keys = [
     Key([mod, "control"], "k", lazy.layout.grow_up(), desc="Grow window up"),
     Key([mod], "n", lazy.layout.normalize(), desc="Reset all window sizes"),
    
-    Key([mod], "Tab", lazy.next_layout(), desc="Toggle between layouts"),
-
     # My keybinds 🗿🗿🗿🗿
     Key([mod],"Return",             lazy.spawn(terminal),           desc="Launch terminal"),
     Key([mod, "shift"], "Return",   lazy.spawn("rofi -show drun"),  desc="Application Launcher"),
     Key([mod, "shift"], "c",        lazy.spawn("rofi -show calc"),  desc="Launch calculator"),
     Key([mod, "shift"], "e",        lazy.spawn("emoji-picker"),     desc="Launch emojis"),
-    Key([mod, "shift"], "s",        lazy.spawn("signal-desktop"),   desc="Launch signal"),
+    Key([mod],          "s",        lazy.spawn("signal-desktop"),   desc="Launch signal"),
     Key([mod]         , "b",        lazy.spawn(browser),            desc="Launch firefox"),
     Key([mod]         , "e",        lazy.spawn("thunderbird"),      desc="Launch thunderbird"),
     Key([mod]         , "f",        lazy.spawn("pcmanfm"),          desc="Launch thunderbird"),
@@ -49,7 +48,8 @@ keys = [
     Key([mod, "shift"], "f",        lazy.window.toggle_floating(),  desc="float focused window"),
     Key([mod, "shift"], "r",        lazy.reload_config(),           desc="Reload the config"),
     Key([mod, "shift"], "x",        lazy.shutdown(),                desc="Shutdown Qtile"),
-    
+    Key([mod, "shift"], "Tab",      lazy.next_layout()),
+    Key([mod],          "Tab",      lazy.spawn("rofi -show")),
     # Media keys
     Key([ ], 'XF86AudioMicMute',    lazy.spawn('pactl set-source-mute @DEFAULT_SOURCE@ toggle')),
     Key([ ], 'XF86AudioMute',       lazy.spawn('pactl set-sink-mute @DEFAULT_SINK@ toggle')),
@@ -67,6 +67,8 @@ keys = [
     # Screenshot
     Key([ ], 'Print',               lazy.spawn('ksnip')),
 
+    # German "umlaute": ä, ö, ü, ß
+    Key([mod, "shift"], "Space",    lazy.spawn(f'{home}german_umlaute.sh')),
 ]
 
 group_names = '        '.split()
@@ -122,7 +124,6 @@ extension_defaults = widget_defaults.copy()
 
 def init_widgets_list():
     widgets_list = [
-
         widget.GroupBox(
             font = "JetBrains Mono",
             fontsize = 25,
@@ -221,7 +222,6 @@ def init_widgets_list():
             padding = 2,
             fontsize = 14
         ),
-
 
         widget.CPU(
             background = colors[0],

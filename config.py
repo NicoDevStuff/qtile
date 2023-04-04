@@ -272,7 +272,7 @@ def init_widgets_list():
             foreground = colors[2],
             fmt = "🧠 {}",
             measure_mem='G',
-            format = "{MemUsed: .1f}{mm}"
+            format = "{MemUsed: .2f}{mm}"
         ),
 
         widget.Sep(

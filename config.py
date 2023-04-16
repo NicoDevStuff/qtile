@@ -7,7 +7,7 @@ import os
 
 mod = "mod4"
 terminal = "kitty"
-browser = "firefox"
+browser = "brave"
 home = os.path.expanduser('~/.config/qtile/')
 
 keys = [
@@ -50,11 +50,15 @@ keys = [
     Key([mod, "shift"], "x",        lazy.shutdown(),                desc="Shutdown Qtile"),
     Key([mod, "shift"], "Tab",      lazy.next_layout()),
     Key([mod],          "Tab",      lazy.spawn("rofi -show")),
+
+    Key([mod, "mod1"], "k",          lazy.to_screen(0)),
+    Key([mod, "mod1"], "j",          lazy.to_screen(1)),
+
     # Media keys
     Key([ ], 'XF86AudioMicMute',    lazy.spawn('pactl set-source-mute @DEFAULT_SOURCE@ toggle')),
-    Key([ ], 'XF86AudioMute',       lazy.spawn('pactl set-sink-mute @DEFAULT_SINK@ toggle')),
-    Key([ ], 'XF86AudioLowerVolume',lazy.spawn('pactl set-sink-volume @DEFAULT_SINK@ -1000')),
-    Key([ ], 'XF86AudioRaiseVolume',lazy.spawn('pactl set-sink-volume @DEFAULT_SINK@ +1000')),
+    Key([ ], 'XF86AudioMute',       lazy.spawn(f'{home}volume.sh mute')),
+    Key([ ], 'XF86AudioLowerVolume',lazy.spawn(f'{home}volume.sh down')),
+    Key([ ], 'XF86AudioRaiseVolume',lazy.spawn(f'{home}volume.sh up')),
     Key([ ], 'XF86AudioPlay',       lazy.spawn('playerctl play-pause')),
     Key([ ], 'XF86AudioPrev',       lazy.spawn('playerctl previous')),
     Key([ ], 'XF86AudioNext',       lazy.spawn('playerctl next')),
@@ -67,8 +71,9 @@ keys = [
     # Screenshot
     Key([ ], 'Print',               lazy.spawn('ksnip')),
 
-    # German "umlaute": ä, ö, ü, ß
+    # German "umlaute": ä, ö, ü, ß and key layout switching
     Key([mod, "shift"], "Space",    lazy.spawn(f'{home}german_umlaute.sh')),
+    Key([mod, "shift"], "K",        lazy.spawn(f'{home}changelayout.sh')),
 ]
 
 group_names = '        '.split()
@@ -92,7 +97,7 @@ colors = [["#282828", "#282828"],
           ["#a89984", "#a89984"]]
 
 layout_theme = {"border_width": 2,
-                "margin": 8,
+                "margin": 15,
                 "border_focus": colors[6],
                 "border_normal": colors[0]
                 }
@@ -181,19 +186,6 @@ def init_widgets_list():
             foreground = colors[0], background = colors[0]
         ),
 
-        widget.CurrentLayoutIcon(
-            custom_icon_paths = [os.path.expanduser("~/.config/qtile/icons")],
-            foreground = colors[2],
-            background = colors[0],
-            padding = 0,
-            scale = 0.7
-        ),
-        
-        widget.Sep(
-            linewidth = 5, padding = 0,
-            foreground = colors[0], background = colors[0]
-        ),
-
         widget.TextBox(
             text = '|',
             background = colors[0],
@@ -265,7 +257,6 @@ def init_widgets_list():
             padding = 2,
             fontsize = 14
         ),
-
         
         widget.Memory(
             background = colors[0],
@@ -311,7 +302,7 @@ def init_widgets_screen1():
 
 def init_widgets_screen2():
     widgets_screen2 = init_widgets_list()
-    del widgets_screen2[23:24]               # Slicing removes unwanted widgets (systray) on Monitors 1,3
+    del widgets_screen2[21:22]               # Slicing removes unwanted widgets (systray) on Monitors 1,3
     return widgets_screen2                 # Monitor 2 will display all widgets in widgets_list
 
 def init_screens():
@@ -324,7 +315,6 @@ if __name__ in ["config", "__main__"]:
     widgets_screen1 = init_widgets_screen1()
     widgets_screen2 = init_widgets_screen2()
 
-# Drag floating layouts.
 mouse = [
     Drag([mod], "Button1", lazy.window.set_position_floating(), start=lazy.window.get_position()),
     Drag([mod], "Button3", lazy.window.set_size_floating(), start=lazy.window.get_size()),
@@ -351,29 +341,12 @@ floating_layout = layout.Floating(
 auto_fullscreen = True
 focus_on_window_activation = "smart"
 reconfigure_screens = True
-
-# If things like steam games want to auto-minimize themselves when losing
-# focus, should we respect this or not?
 auto_minimize = True
-
-# When using the Wayland backend, this can be used to configure input devices.
 wl_input_rules = None
+wmname = "LG3D"
 
 # Autostarts
 @hook.subscribe.startup_once
 def autostart():
     home = os.path.expanduser('~/.config/qtile/autostart.sh')
     subprocess.Popen([home])
-
-
-# XXX: Gasp! We're lying here. In fact, nobody really uses or cares about this
-# string besides java UI toolkits; you can see several discussions on the
-# mailing lists, GitHub issues, and other WM documentation that suggest setting
-# this string if your java app doesn't work correctly. We may as well just lie
-# and say that we're a working one by default.
-#
-# We choose LG3D to maximize irony: it is a 3D non-reparenting WM written in
-# java that happens to be on java's whitelist.
-wmname = "LG3D"
-
-

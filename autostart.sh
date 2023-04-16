@@ -5,6 +5,7 @@ nm-applet &
 volumeicon &
 # for laptop users only!
 # cbatticon &
+blueman-applet &
 conky -c ~/.config/conky/qtile/conky.conf
 udiskie &
 easyeffects &

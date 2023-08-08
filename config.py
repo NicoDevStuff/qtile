@@ -1,14 +1,20 @@
 from libqtile import bar, layout, widget, hook
+import libqtile
 from libqtile.config import Click, Drag, Group, Key, Match, Screen
 from libqtile.lazy import lazy
 from libqtile.utils import guess_terminal
 import subprocess
 import os
 
-mod = "mod4"
+mod = "mod1"
 terminal = "kitty"
 browser = "brave"
 home = os.path.expanduser('~/.config/qtile/')
+
+# BAR SETTINGS
+BAR_OPACITY = 1.0
+BAR_SIZE    = 22
+BAR_MARGIN  = 4
 
 keys = [
     Key([mod], "h", lazy.layout.left(), desc="Move focus to left"),
@@ -23,12 +29,10 @@ keys = [
     Key([mod, "shift"], "k", lazy.layout.shuffle_up(), desc="Move window up"),
 
     Key([mod, "control"], "h", 
-        lazy.layout.shrink(),
-        lazy.layout.decrease_nmaster(),
+        lazy.layout.grow(),
         desc="Grow window to the left"),
     Key([mod, "control"], "l", 
-        lazy.layout.grow(), 
-        lazy.layout.increase_nmaster(),
+        lazy.layout.shrink(), 
         desc="Grow window to the right"),
 
     Key([mod, "control"], "j", lazy.layout.grow_down(), desc="Grow window down"),
@@ -39,11 +43,11 @@ keys = [
     Key([mod],"Return",             lazy.spawn(terminal),           desc="Launch terminal"),
     Key([mod, "shift"], "Return",   lazy.spawn("rofi -show drun"),  desc="Application Launcher"),
     Key([mod, "shift"], "c",        lazy.spawn("rofi -show calc"),  desc="Launch calculator"),
-    Key([mod, "shift"], "e",        lazy.spawn("emoji-picker"),     desc="Launch emojis"),
+    Key([mod],          "e",        lazy.spawn("rofimoji"),         desc="Launch emojis"),
     Key([mod],          "s",        lazy.spawn("signal-desktop"),   desc="Launch signal"),
-    Key([mod]         , "b",        lazy.spawn(browser),            desc="Launch firefox"),
-    Key([mod]         , "e",        lazy.spawn("thunderbird"),      desc="Launch thunderbird"),
-    Key([mod]         , "f",        lazy.spawn("pcmanfm"),          desc="Launch thunderbird"),
+    Key([mod]         , "b",        lazy.spawn(browser),            desc="Launch browser"),
+    Key([mod, "shift"], "e",        lazy.spawn("thunderbird"),      desc="Launch thunderbird"),
+    Key([mod]         , "f",        lazy.spawn("pcmanfm"),          desc="Launch filemanager"),
     Key([mod]         , "q",        lazy.window.kill(),             desc="Kill focused window"),
     Key([mod, "shift"], "f",        lazy.window.toggle_floating(),  desc="float focused window"),
     Key([mod, "shift"], "r",        lazy.reload_config(),           desc="Reload the config"),
@@ -65,24 +69,23 @@ keys = [
     Key([ ], 'XF86MonBrightnessUp', lazy.spawn('brightnessctl set +5%')),
     Key([],  'XF86MonBrightnessDown',lazy.spawn('brightnessctl set 5%-')),
 
-    # Caps lock indicator
-    Key([ ], 'Caps_Lock',           lazy.spawn('notify-send "🤓🤓🤓🤓" "<u><b>CAPS</b></u>" -u critical')),
-
     # Screenshot
     Key([ ], 'Print',               lazy.spawn('ksnip')),
 
     # German "umlaute": ä, ö, ü, ß and key layout switching
     Key([mod, "shift"], "Space",    lazy.spawn(f'{home}german_umlaute.sh')),
-    Key([mod, "shift"], "K",        lazy.spawn(f'{home}changelayout.sh')),
+    Key([mod, "mod1"], "k",        lazy.spawn(f'{home}changelayout.sh')),
 ]
 
-group_names = '        '.split()
+group_names = '1 2 3 4 5 6 7 8 9'.split()
+# group_names = '        '.split()
 groups = [Group(name, layout='monadtall') for name in group_names]
 for i, name in enumerate(group_names):
     indx = str(i + 1)
     keys += [
         Key([mod], indx, lazy.group[name].toscreen()),
-        Key([mod, 'shift'], indx, lazy.window.togroup(name))]
+        Key([mod, 'shift'], indx, lazy.window.togroup(name))
+    ]
 
 colors = [["#282828", "#282828"],
           ["#1d2021", "#1d2021"],
@@ -94,17 +97,19 @@ colors = [["#282828", "#282828"],
           ["#b16286", "#b16286"],
           ["#83a598", "#83a598"],
           ["#d3869b", "#d3869b"],
-          ["#a89984", "#a89984"]]
+          ["#a89984", "#a89984"],
+          ["#bbbbbb", "#bbbbbb"],
+          ["#ffffff", "#ffffff"]]
 
 layout_theme = {"border_width": 2,
                 "margin": 15,
-                "border_focus": colors[6],
+                "border_focus": colors[8],
                 "border_normal": colors[0]
                 }
 layouts = [
     layout.MonadTall(**layout_theme),
     layout.Max(),
-    layout.Floating(**layout_theme)
+    layout.Floating(**layout_theme),
     # layout.Columns(border_focus_stack=["#d75f5f", "#8f3d3d"], border_width=2),
     # Try more layouts by unleashing below layouts.
     # layout.Stack(num_stacks=2),
@@ -120,10 +125,11 @@ layouts = [
 ]
 
 widget_defaults = dict(
-    font="JetBrains Mono",
-    fontsize=14,
-    margin_y = 4,
-    background=colors[1]
+    font = "JetBrains Mono",
+    fontsize = 14,
+    margin_y = 3,
+    foreground=colors[11],
+    background=colors[0]
 )
 extension_defaults = widget_defaults.copy()
 
@@ -131,8 +137,9 @@ def init_widgets_list():
     widgets_list = [
         widget.GroupBox(
             font = "JetBrains Mono",
-            fontsize = 25,
+            fontsize = 14,
             disable_drag = True,
+            hide_unused = True,
             margin_y = 3,
             margin_x = 0,
             padding_y = 0,
@@ -144,154 +151,102 @@ def init_widgets_list():
             highlight_color = colors[1],
             highlight_method = "block",
             this_current_screen_border = colors[8],
-            this_screen_border = colors [4],
-            other_current_screen_border = colors[6],
-            other_screen_border = colors[4],
-            foreground = colors[2],
+            # this_screen_border = colors [4],
+            # other_current_screen_border = colors[6],
+            # other_screen_border = colors[4],
+            foreground = colors[11],
             background = colors[0]
         ),
         
-        widget.Sep(
-            linewidth = 5, padding = 0,
-            foreground = colors[0], background = colors[0]
-        ),
-
         widget.TextBox(
             text = '|',
-            background = colors[0],
-            foreground = colors[2],
-            padding = 2,
-            fontsize = 14
+            **widget_defaults
         ), 
-        
-        widget.Sep(
-            linewidth = 5, padding = 0,
-            foreground = colors[0], background = colors[0]
-        ),
 
         widget.WindowName(
-            foreground = colors[2],
-            background = colors[0],
             padding = 0,
-            fontsize = 14,
-            margin_y = 4,
             margin_x = 0,
             padding_y = 0,
             padding_x = 6,
             borderwidth = 3,
-        ),
-        
-        widget.Sep(
-            linewidth = 5, padding = 0,
-            foreground = colors[0], background = colors[0]
+            **widget_defaults
         ),
 
         widget.TextBox(
             text = '|',
-            background = colors[0],
-            foreground = colors[2],
-            padding = 2,
-            fontsize = 14
-        ),
-         
+            **widget_defaults
+        ), 
+
         widget.PulseVolume(
-            background = colors[0],
-            foreground = colors[2],
             volume_app = "pamixer",
-            update_interval = 0.01,
-            fmt = "🔊 {}",
+            update_interval = 0.001,
+            emoji = True,
+            fmt = "{}",
+            **widget_defaults
         ),
 
-        widget.Sep(
-            linewidth = 5, padding = 0,
-            foreground = colors[0], background = colors[0]
+        widget.PulseVolume(
+            volume_app = "pamixer",
+            update_interval = 0.001,
+            fmt = "{} ",
+            **widget_defaults
         ),
 
         widget.TextBox(
             text = '|',
-            background = colors[0],
-            foreground = colors[2],
-            padding = 2,
-            fontsize = 14
-        ),
+            **widget_defaults
+        ), 
 
         widget.CPU(
-            background = colors[0],
-            foreground = colors[2],
             fmt = "💻 {}",
-            format = "{load_percent}%"
-        ),
-
-        widget.Sep(
-            linewidth = 5, padding = 0,
-            foreground = colors[0], background = colors[0]
+            format = "{load_percent}%",
+            update_interval = 3.0,
+            mouse_callbacks = {'Button1': lazy.spawn(f"{terminal} btop"),},
+            **widget_defaults
         ),
 
         widget.TextBox(
             text = '|',
-            background = colors[0],
-            foreground = colors[2],
-            padding = 2,
-            fontsize = 14
-        ),
+            **widget_defaults
+        ), 
 
         widget.ThermalZone(
-            background = colors[0],
-            fgcolor_normal = colors[2],
+            fgcolor_normal = colors[11],
             fgcolor_high = colors[5],
             fgcolor_crit = colors[3],
-            update_interval = 1,
+            update_interval = 3.0,
             zone = '/sys/class/thermal/thermal_zone1/temp',
-            fmt = "🔥 {}"
-        ),
-
-        widget.Sep(
-            linewidth = 5, padding = 0,
-            foreground = colors[0], background = colors[0]
+            fmt = "🔥 {}",
+            mouse_callbacks = {'Button1': lazy.spawn(f"{terminal} btop"),},
+            **widget_defaults
         ),
 
         widget.TextBox(
             text = '|',
-            background = colors[0],
-            foreground = colors[2],
-            padding = 2,
-            fontsize = 14
-        ),
+            **widget_defaults
+        ), 
         
         widget.Memory(
-            background = colors[0],
-            foreground = colors[2],
             fmt = "🧠 {}",
             measure_mem='G',
-            format = "{MemUsed: .2f}{mm}"
-        ),
-
-        widget.Sep(
-            linewidth = 5, padding = 0,
-            foreground = colors[0], background = colors[0]
+            format = "{MemUsed: .2f}{mm}",
+            update_interval = 3.0,
+            mouse_callbacks = {'Button1': lazy.spawn(f"{terminal} btop"),},
+            **widget_defaults
         ),
 
         widget.TextBox(
             text = '|',
-            background = colors[0],
-            foreground = colors[2],
-            padding = 2,
-            fontsize = 14
-        ),
-
-        widget.Sep(
-            linewidth = 5, paddi= 0,
-            foreground = colors[0], background = colors[0]
-        ),
+            **widget_defaults
+        ), 
 
         widget.Clock(
-            format="📆 %Y-%m-%d %a | 🕒 %H:%M:%S %p",
-            foreground = colors[2],
-            background = colors[0],
+            format="📆 %d.%m.%Y(%a) | 🕒 %H:%M:%S",
+            **widget_defaults
         ),
 
         widget.Systray(
-            background = colors[0],
+            **widget_defaults
         ),
     ]
     return widgets_list
@@ -302,12 +257,13 @@ def init_widgets_screen1():
 
 def init_widgets_screen2():
     widgets_screen2 = init_widgets_list()
-    del widgets_screen2[21:22]               # Slicing removes unwanted widgets (systray) on Monitors 1,3
+    widgets_screen2_len = len(widgets_screen2)
+    del widgets_screen2[widgets_screen2_len-1:widgets_screen2_len]              # Slicing removes unwanted widgets (systray) on Monitors 1,3
     return widgets_screen2                 # Monitor 2 will display all widgets in widgets_list
 
 def init_screens():
-    return [Screen(top=bar.Bar(widgets=init_widgets_screen1(), opacity=1.0, size=23, margin=5)),
-            Screen(top=bar.Bar(widgets=init_widgets_screen2(), opacity=1.0, size=23, margin=5))]
+    return [Screen(top=bar.Bar(widgets=init_widgets_screen1(), opacity=BAR_OPACITY, size=BAR_SIZE, margin=BAR_MARGIN)),
+            Screen(top=bar.Bar(widgets=init_widgets_screen2(), opacity=BAR_OPACITY, size=BAR_SIZE, margin=BAR_MARGIN))]
 
 if __name__ in ["config", "__main__"]:
     screens = init_screens()
@@ -339,7 +295,7 @@ floating_layout = layout.Floating(
     ]
 )
 auto_fullscreen = True
-focus_on_window_activation = "smart"
+focus_on_window_activation = "focus"
 reconfigure_screens = True
 auto_minimize = True
 wl_input_rules = None

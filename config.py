@@ -14,7 +14,7 @@ home = os.path.expanduser('~/.config/qtile/')
 # BAR SETTINGS
 BAR_OPACITY = 1.0
 BAR_SIZE    = 22
-BAR_MARGIN  = 4
+BAR_MARGIN  = 5
 
 keys = [
     Key([mod], "h", lazy.layout.left(), desc="Move focus to left"),
@@ -102,7 +102,7 @@ colors = [["#282828", "#282828"],
           ["#ffffff", "#ffffff"]]
 
 layout_theme = {"border_width": 2,
-                "margin": 15,
+                "margin": 20,
                 "border_focus": colors[8],
                 "border_normal": colors[0]
                 }
@@ -142,18 +142,20 @@ def init_widgets_list():
             hide_unused = True,
             margin_y = 3,
             margin_x = 0,
-            padding_y = 0,
+            padding_y = 1,
             padding_x = 6,
             borderwidth = 3,
             active = colors[2],
             inactive = colors[10],
-            rounded = False,
+            rounded = True,
             highlight_color = colors[1],
             highlight_method = "block",
+
             this_current_screen_border = colors[8],
-            # this_screen_border = colors [4],
-            # other_current_screen_border = colors[6],
-            # other_screen_border = colors[4],
+            this_screen_border = colors [4],
+            other_current_screen_border = colors[6],
+            other_screen_border = colors[4],
+
             foreground = colors[11],
             background = colors[0]
         ),
@@ -258,7 +260,7 @@ def init_widgets_screen1():
 def init_widgets_screen2():
     widgets_screen2 = init_widgets_list()
     widgets_screen2_len = len(widgets_screen2)
-    del widgets_screen2[widgets_screen2_len-1:widgets_screen2_len]              # Slicing removes unwanted widgets (systray) on Monitors 1,3
+    del widgets_screen2[widgets_screen2_len-1]              # Slicing removes unwanted widgets (systray) on Monitors 1,3
     return widgets_screen2                 # Monitor 2 will display all widgets in widgets_list
 
 def init_screens():
@@ -283,6 +285,8 @@ follow_mouse_focus = True
 bring_front_click = False
 cursor_warp = False
 floating_layout = layout.Floating(
+    border_focus=colors[8],
+    border_width=2,
     float_rules=[
         # Run the utility of `xprop` to see the wm class and name of an X client.
         *layout.Floating.default_float_rules,
@@ -295,7 +299,7 @@ floating_layout = layout.Floating(
     ]
 )
 auto_fullscreen = True
-focus_on_window_activation = "focus"
+focus_on_window_activation = "smart"
 reconfigure_screens = True
 auto_minimize = True
 wl_input_rules = None

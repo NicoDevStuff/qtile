@@ -16,6 +16,7 @@ BAR_OPACITY = 1.0
 BAR_SIZE    = 22
 BAR_MARGIN  = 5
 
+# Keybinds
 keys = [
     Key([mod], "h", lazy.layout.left(), desc="Move focus to left"),
     Key([mod], "l", lazy.layout.right(), desc="Move focus to right"),
@@ -52,6 +53,7 @@ keys = [
     Key([mod, "shift"], "f",        lazy.window.toggle_floating(),  desc="float focused window"),
     Key([mod, "shift"], "r",        lazy.reload_config(),           desc="Reload the config"),
     Key([mod, "shift"], "x",        lazy.shutdown(),                desc="Shutdown Qtile"),
+    Key([mod],          "space",    lazy.window.toggle_fullscreen(),desc="Maximize window"),
     Key([mod, "shift"], "Tab",      lazy.next_layout()),
     Key([mod],          "Tab",      lazy.spawn("rofi -show")),
 
@@ -78,7 +80,6 @@ keys = [
 ]
 
 group_names = '1 2 3 4 5 6 7 8 9'.split()
-# group_names = '        '.split()
 groups = [Group(name, layout='monadtall') for name in group_names]
 for i, name in enumerate(group_names):
     indx = str(i + 1)
@@ -152,9 +153,9 @@ def init_widgets_list():
             highlight_method = "block",
 
             this_current_screen_border = colors[8],
-            this_screen_border = colors [4],
-            other_current_screen_border = colors[6],
-            other_screen_border = colors[4],
+            this_screen_border = colors [0],
+            other_current_screen_border = colors[8],
+            other_screen_border = colors[0],
 
             foreground = colors[11],
             background = colors[0]
@@ -171,6 +172,22 @@ def init_widgets_list():
             padding_y = 0,
             padding_x = 6,
             borderwidth = 3,
+            **widget_defaults
+        ),
+
+        widget.TextBox(
+            text = '|',
+            **widget_defaults
+        ),  
+        
+        widget.CheckUpdates( 
+            update_interval = 1800,
+            distro = "Arch_checkupdates",
+            display_format = "📦 {updates}",
+            no_update_string = '📦 0',
+            colour_have_updates = colors[11],
+            colour_no_updates = colors[11],
+            execute = f"{terminal} sudo pacman -Syu",
             **widget_defaults
         ),
 
@@ -217,7 +234,6 @@ def init_widgets_list():
             fgcolor_high = colors[5],
             fgcolor_crit = colors[3],
             update_interval = 3.0,
-            zone = '/sys/class/thermal/thermal_zone1/temp',
             fmt = "🔥 {}",
             mouse_callbacks = {'Button1': lazy.spawn(f"{terminal} btop"),},
             **widget_defaults
@@ -301,7 +317,7 @@ floating_layout = layout.Floating(
 auto_fullscreen = True
 focus_on_window_activation = "smart"
 reconfigure_screens = True
-auto_minimize = True
+auto_minimize = False
 wl_input_rules = None
 wmname = "LG3D"
 

@@ -13,6 +13,7 @@ easyeffects &
 solaar &
 picom &
 dex -vad &
+protonvpn &
 
 # No more caps lock
 setxkbmap -option caps:none
